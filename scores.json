@@ -3,6 +3,14 @@
   "maj": "2026-08-19",
   "scores": [
     {
+      "nom": "alez ma biche",
+      "score": 88573,
+      "temps": 118,
+      "kills": 35,
+      "gagne": true,
+      "github": "midd1312"
+    },
+    {
       "nom": "sisi la famill",
       "score": 85897,
       "temps": 127,
