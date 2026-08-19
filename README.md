@@ -53,10 +53,12 @@ bornée en hauteur autant qu'en largeur, pour que tout reste dans le cadre.
 - **Score et classement.** La partie est chronométrée : le score récompense la
   vitesse, les adversaires mis au tapis et les dégâts évités. En fin de partie
   on entre son nom, et le classement du Pays Noir est conservé sur l'appareil.
-- **Comparer avec ses amis sans serveur.** Chaque score enregistré produit un
-  code `JC1-…` à envoyer. Collé chez un ami, il fait entrer le score dans son
-  classement, marqué d'un point. Les codes s'échangent par message : rien ne
-  transite par un serveur, le jeu reste une page statique.
+- **Un classement commun, sans serveur.** Le jeu lit `scores.json`, servi à
+  côté de lui : tout le monde voit le même tableau. Les scores encore locaux y
+  apparaissent marqués « local » jusqu'à publication. Hors ligne, ou ouvert
+  depuis un fichier, le jeu retombe sans bruit sur les scores de l'appareil.
+- **Comparer sans passer par GitHub.** Chaque score produit aussi un code
+  `JC1-…`. Collé chez un ami, il entre directement dans son classement.
 - Charleroi sous la drache : terrils, cheminées de la sidérurgie, tour bleue de
   la police, beffroi art déco et dôme de la basilique Saint-Christophe.
 
@@ -73,3 +75,33 @@ stocké dans le dépôt.
 
 HTML, CSS et JavaScript natifs, rendu sur `<canvas>`, audio synthétisé via Web
 Audio. Aucune bibliothèque externe, aucune ressource distante.
+
+## Le classement commun
+
+`scores.json` est un simple fichier du dépôt, lu par le jeu. Trois façons de
+l'alimenter, aucune n'expose de secret.
+
+**Le joueur publie lui-même.** Le bouton « Publier au classement commun » ouvre
+un ticket pré-rempli avec son code. Le robot `.github/workflows/scores.yml` le
+valide, met `scores.json` à jour, répond le rang obtenu et referme le ticket.
+Il faut un compte GitHub.
+
+**Tu ajoutes un code reçu par message**, pour les amis sans compte GitHub :
+
+```bash
+./ajouter-score.sh JC1-eyJuIjoi…
+```
+
+**Vous échangez les codes entre vous**, sans rien publier : chacun colle les
+codes des autres dans son propre classement.
+
+### Pourquoi le jeu n'écrit pas directement
+
+Écrire dans le dépôt depuis la page demanderait un jeton d'écriture dans du
+JavaScript public : n'importe qui pourrait s'en servir pour modifier ou effacer
+le dépôt. Le robot, lui, s'authentifie côté GitHub avec un jeton qui ne quitte
+jamais le runner.
+
+Le classement reste déclaratif : un code est fabricable à la main. Le script
+refuse les scores dépassant le maximum atteignable et enregistre le compte
+GitHub de l'auteur, ce qui suffit entre amis — pas contre un tricheur motivé.

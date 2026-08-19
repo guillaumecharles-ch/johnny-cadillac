@@ -243,6 +243,18 @@
   }
   .finLigne input:focus{outline:2px solid var(--sodium);outline-offset:1px;border-color:var(--sodium);}
   #finCode{color:#c9a852;}
+  #finEtat{margin:0;font-size:11px;color:#7a7062;}
+  #finEtat.ok{color:#7fc46a;}
+  #finPublier{
+    align-self:flex-start;
+    font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+    padding:9px 16px;border-radius:3px;
+    background:rgba(90,208,192,.14);color:#5ad0c0;
+    border:1px solid #5ad0c0;text-decoration:none;
+  }
+  #finPublier:hover{background:rgba(90,208,192,.26);}
+  #finPublier:focus-visible{outline:2px solid var(--craie);outline-offset:2px;}
+  #finPublier[aria-disabled="true"]{opacity:.4;pointer-events:none;}
   #finMsg{margin:0;font-size:12px;}
   #finMsg[hidden]{display:none;}
   #finMsg.ok{color:#7fc46a;}
@@ -273,6 +285,7 @@
         <button type="submit">Enregistrer</button>
       </form>
       <div class="finTitreSection">Classement du Pays Noir</div>
+      <p id="finEtat"></p>
       <ol id="finTableau"></ol>
       <p id="finVide" hidden>Personne au tableau. Sois le premier.</p>
       <div class="finTitreSection">Comparer avec tes amis</div>
@@ -282,6 +295,7 @@
           <input id="finCode" readonly value="—">
           <button id="finCopier" type="button">Copier</button>
         </div>
+        <a id="finPublier" href="#" target="_blank" rel="noopener">Publier au classement commun</a>
         <label for="finImport">Le code d'un ami, à coller ici</label>
         <div class="finLigne">
           <input id="finImport" placeholder="JC1-…" autocomplete="off" spellcheck="false">
@@ -634,6 +648,40 @@ function urakenDmg(){return URAKEN;}
 /* Score et classement du Pays Noir                                    */
 /* ------------------------------------------------------------------ */
 const CLE_SCORES="johnny-cadillac-scores";
+const DEPOT="guillaumecharles-ch/johnny-cadillac";
+/* Le classement commun est un simple fichier servi à côté du jeu. On peut le
+   lire sans rien exposer ; l'écriture, elle, passe par un robot côté GitHub,
+   car un jeton d'écriture dans cette page serait public. */
+let scoresEnLigne=null;      // null tant qu'on n'a rien pu charger
+let dernierIdSurligne=null;
+async function chargerEnLigne(){
+  try{
+    const r=await fetch("scores.json",{cache:"no-store"});
+    if(!r.ok)return null;
+    const d=await r.json();
+    const arr=Array.isArray(d)?d:(d&&Array.isArray(d.scores)?d.scores:null);
+    if(!arr)return null;
+    return arr
+      .filter(e=>e&&typeof e.score==="number"&&isFinite(e.score)&&e.score>=0)
+      .map(e=>({
+        nom:String(e.nom||"—").slice(0,14),
+        score:Math.round(e.score),
+        temps:Math.max(0,Math.round(Number(e.temps)||0)),
+        kills:Math.max(0,Math.round(Number(e.kills)||0)),
+        gagne:!!e.gagne,
+        github:e.github?String(e.github).slice(0,39):null,
+        enLigne:true,
+      }));
+  }catch(err){return null;}          // fichier:// , hors ligne, CSP : on reste en local
+}
+function cleScore(e){return (e.nom||"")+"|"+e.score+"|"+(e.temps||0);}
+function scoresAffichables(){
+  const loc=chargerScores();
+  const glob=scoresEnLigne||[];
+  const vus=new Set(glob.map(cleScore));
+  return glob.concat(loc.filter(e=>!vus.has(cleScore(e))))
+             .sort((a,b)=>b.score-a.score);
+}
 function chargerScores(){
   try{
     const brut=localStorage.getItem(CLE_SCORES);
@@ -2104,16 +2152,27 @@ function messageFin(txt,ok){
   m.textContent=txt;m.className=ok?"ok":"ko";m.hidden=false;
 }
 function afficherClassement(idSurligne){
-  const arr=chargerScores();
+  if(idSurligne!==undefined)dernierIdSurligne=idSurligne;
+  const arr=scoresAffichables();
   elFinTableau.textContent="";
   elFinVide.hidden=arr.length>0;
+  const st=document.getElementById("finEtat");
+  if(scoresEnLigne){
+    st.textContent="Classement commun · "+scoresEnLigne.length+
+      (scoresEnLigne.length>1?" scores en ligne":" score en ligne");
+    st.className="ok";
+  }else{
+    st.textContent="Classement hors ligne : scores de cet appareil seulement.";
+    st.className="";
+  }
   arr.slice(0,10).forEach((e,i)=>{
     const li=document.createElement("li");
     if(idSurligne&&e.id===idSurligne)li.className="moi";
     const r=document.createElement("span");r.className="rang";r.textContent=(i+1)+".";
     /* textContent : un pseudo enregistré reste du texte, jamais du balisage */
     const n=document.createElement("span");
-    n.textContent=(e.nom||"—")+(e.importe?" ·":"");
+    n.textContent=(e.nom||"—")+(e.enLigne?"":" · local");
+    if(e.github)n.title="Soumis par @"+e.github;
     const t=document.createElement("span");t.className="tps";t.textContent=chrono(e.temps||0);
     const pt=document.createElement("span");pt.className="pts";
     pt.textContent=(e.score||0).toLocaleString("fr-BE");
@@ -2142,11 +2201,15 @@ function ouvrirFin(gagne){
   });
   elFinForm.hidden=false;
   document.getElementById("finCode").value="—";
+  document.getElementById("finPublier").setAttribute("aria-disabled","true");
   document.getElementById("finImport").value="";
   document.getElementById("finMsg").hidden=true;
   elFinVide.textContent="Personne au tableau. Sois le premier.";
   try{elFinNom.value=localStorage.getItem("johnny-cadillac-nom")||"";}catch(e){}
   afficherClassement(null);
+  chargerEnLigne().then(a=>{
+    if(a){scoresEnLigne=a;afficherClassement(dernierIdSurligne);}
+  });
   elFin.hidden=false;
   setTimeout(()=>{try{elFinNom.focus();}catch(e){}},80);
 }
@@ -2165,7 +2228,16 @@ elFinForm.addEventListener("submit",ev=>{
   const ok=enregistrerScore(entree);
   try{localStorage.setItem("johnny-cadillac-nom",nom);}catch(e){}
   elFinForm.hidden=true;
-  document.getElementById("finCode").value=codeScore(entree);
+  const code=codeScore(entree);
+  document.getElementById("finCode").value=code;
+  const lien=document.getElementById("finPublier");
+  lien.href="https://github.com/"+DEPOT+"/issues/new"
+    +"?labels=score"
+    +"&title="+encodeURIComponent("Score : "+entree.nom)
+    +"&body="+encodeURIComponent(
+      "Code : "+code+"\n\nLaisse la ligne ci-dessus telle quelle : le robot la lit "
+      +"et met le classement à jour tout seul.");
+  lien.removeAttribute("aria-disabled");
   afficherClassement(entree.id);
   if(!ok){
     elFinVide.textContent="Score non enregistré : cet appareil bloque le stockage local.";
