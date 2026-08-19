@@ -22,17 +22,21 @@ URAKEN.
 
 ## Ce qu'il y a dedans
 
-- **Trois zones.** Ville basse et ville haute comptent quatre vagues chacune,
-  avec un boss pour finir ; entre les deux, une descente de la Sambre en
-  gondole où il faut slalomer entre pneus, palettes, caddies, bidons et ce qui
-  flotte à côté. Un uraken bien placé dégage un débris de la proue.
+- **Trois zones.** Ville basse et ville haute comptent quatre vagues chacune ;
+  entre les deux, une descente de la Sambre en gondole où il faut slalomer
+  entre pneus, palettes, caddies, bidons et ce qui flotte à côté. Un uraken
+  bien placé dégage un débris de la proue.
+- **Un boss qui se défend.** Il encaisse quatorze urakens, lance ses lames par
+  gerbes de trois, enchaîne les coups deux fois plus vite que ses hommes, et
+  surtout il **décroche sur le côté quand il voit l'uraken partir** : environ
+  une esquive sur deux, signalée par une image rémanente.
 - **Des ennemis qui tirent.** Les tox lancent des seringues, les machettes
   lancent leur lame. Un bandeau turquoise annonce le tir : l'uraken dévie le
   projectile si le timing est bon.
 - **Pita-mitraillettes sauce andalouse**, coca sans sucre compris : deux par
-  zone posées au sol, et un ennemi sur neuf en lâche une. On les ramasse avec
-  Espace et elles rendent 30 points de vie. À pleine santé, Espace frappe au
-  lieu de ramasser.
+  zone, posées au sol et rien d'autre — les ennemis n'en lâchent aucune. On les
+  ramasse avec Espace pour 30 points de vie. À pleine santé, Espace frappe au
+  lieu de ramasser. Six pitas pour toute la partie : il faut les mériter.
 - **Pas de niveaux, pas d'expérience.** Johnny a 120 points de vie du début à
   la fin et son uraken frappe toujours à 25. Ce qui progresse, c'est le joueur.
 - Tous les huit adversaires, un compliment de Madame la Juge ou du Procureur
