@@ -51,6 +51,10 @@ URAKEN.
 - **Score et classement.** La partie est chronométrée : le score récompense la
   vitesse, les adversaires mis au tapis et les dégâts évités. En fin de partie
   on entre son nom, et le classement du Pays Noir est conservé sur l'appareil.
+- **Comparer avec ses amis sans serveur.** Chaque score enregistré produit un
+  code `JC1-…` à envoyer. Collé chez un ami, il fait entrer le score dans son
+  classement, marqué d'un point. Les codes s'échangent par message : rien ne
+  transite par un serveur, le jeu reste une page statique.
 - Charleroi sous la drache : terrils, cheminées de la sidérurgie, tour bleue de
   la police, beffroi art déco et dôme de la basilique Saint-Christophe.
 
