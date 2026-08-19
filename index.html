@@ -451,7 +451,7 @@ const ZONES=[
     sousTitre:"Quai de la Sambre",
     intro:"Les tox tiennent le quai. Johnny a une solution : l'Uraken.",
     len:3000,
-    pitas:[640,1420,2200,2760],
+    pitas:[1180,2380],
     waves:[
       {trig:380,  compo:["tox","tox","tox"]},
       {trig:1050, compo:["tox","tox","tox","tox"]},
@@ -465,7 +465,7 @@ const ZONES=[
     sousTitre:"En gondole vers la ville haute",
     intro:"Une gondole sur la Sambre. Évite les débris — et ce qui flotte à côté.",
     len:4400,
-    pitas:[900,1900,2900,3800],
+    pitas:[1500,3200],
   },
   {
     kind:"rue", deco:"haute",
@@ -473,7 +473,7 @@ const ZONES=[
     sousTitre:"Place Charles II",
     intro:"Les machettes rôdent sous le beffroi. Personne ne touche à Charleroi.",
     len:3000,
-    pitas:[700,1500,2300,2820],
+    pitas:[1300,2500],
     waves:[
       {trig:380,  compo:["machette","machette","machette"]},
       {trig:1050, compo:["machette","machette","tox","tox","machette"]},
@@ -822,7 +822,7 @@ function updateRue(dt,zone){
       sfx.kill();
       burst(e.x,e.y-30,e.type==="tox"?"#8fa06a":"#e05545",12);
       addFloat(e.x,e.y-50,CRIS[Math.floor(Math.random()*CRIS.length)],"#ece5d3");
-      if(Math.random()<0.30||e.type==="boss")pitas.push({x:e.x,y:e.y,age:0,flotte:false});
+      if(Math.random()<0.11||e.type==="boss")pitas.push({x:e.x,y:e.y,age:0,flotte:false});
       enemies.splice(i,1);
     }
   }

@@ -29,9 +29,10 @@ URAKEN.
 - **Des ennemis qui tirent.** Les tox lancent des seringues, les machettes
   lancent leur lame. Un bandeau turquoise annonce le tir : l'uraken dévie le
   projectile si le timing est bon.
-- **Pita-mitraillettes sauce andalouse**, coca sans sucre compris, posées au
-  sol et lâchées par les ennemis. On les ramasse avec Espace et elles rendent
-  30 points de vie. À pleine santé, Espace frappe au lieu de ramasser.
+- **Pita-mitraillettes sauce andalouse**, coca sans sucre compris : deux par
+  zone posées au sol, et un ennemi sur neuf en lâche une. On les ramasse avec
+  Espace et elles rendent 30 points de vie. À pleine santé, Espace frappe au
+  lieu de ramasser.
 - **Progression RPG** : points de vie, expérience, niveaux, et un uraken qui
   gagne cinq points de dégâts par niveau.
 - À chaque niveau, un compliment de Madame la Juge ou du Procureur du Roi.
