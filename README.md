@@ -18,8 +18,9 @@ Double-cliquez sur `index.html`, ou jouez en ligne si GitHub Pages est activé.
 | M | Couper ou relancer la musique |
 
 Sur écran tactile, une croix directionnelle complète et un bouton URAKEN
-apparaissent **sous** le canvas : en portrait le jeu ne fait qu'environ 200 px
-de haut, des commandes posées par-dessus le masqueraient.
+apparaissent, jamais par-dessus le jeu : **sous** la scène en portrait, et
+**de part et d'autre** en paysage, où la hauteur d'écran manque. La scène est
+bornée en hauteur autant qu'en largeur, pour que tout reste dans le cadre.
 
 ## Ce qu'il y a dedans
 
