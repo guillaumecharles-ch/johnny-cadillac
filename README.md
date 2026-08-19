@@ -17,8 +17,9 @@ Double-cliquez sur `index.html`, ou jouez en ligne si GitHub Pages est activé.
 | Espace | Uraken, et ramasser une pita-mitraillette |
 | M | Couper ou relancer la musique |
 
-Sur écran tactile, des boutons apparaissent automatiquement, dont un bouton
-URAKEN.
+Sur écran tactile, une croix directionnelle complète et un bouton URAKEN
+apparaissent **sous** le canvas : en portrait le jeu ne fait qu'environ 200 px
+de haut, des commandes posées par-dessus le masqueraient.
 
 ## Ce qu'il y a dedans
 
