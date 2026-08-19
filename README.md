@@ -25,14 +25,21 @@ URAKEN.
 - **Trois zones.** Ville basse et ville haute comptent quatre vagues chacune ;
   entre les deux, une descente de la Sambre en gondole où il faut slalomer
   entre pneus, palettes, caddies, bidons et ce qui flotte à côté. Un uraken
-  bien placé dégage un débris de la proue.
+  bien placé dégage un débris de la proue — mais pas un bateau-promenade, qui
+  passe indifférent avec son couple enlacé à la proue. Sur la berge d'en face,
+  on attend le client sous les lampadaires.
 - **Un boss qui se défend.** Il encaisse quatorze urakens, lance ses lames par
   gerbes de trois, enchaîne les coups deux fois plus vite que ses hommes, et
   surtout il **décroche sur le côté quand il voit l'uraken partir** : environ
   une esquive sur deux, signalée par une image rémanente.
-- **Des ennemis qui tirent.** Les tox lancent des seringues, les machettes
-  lancent leur lame. Un bandeau turquoise annonce le tir : l'uraken dévie le
-  projectile si le timing est bon.
+- **Des ennemis qui tirent.** Les tox lancent des seringues, les chômeurs
+  balancent leurs canettes de Carapils et de 8.6, les machettes lancent leur
+  lame. Un bandeau turquoise annonce le tir : l'uraken dévie le projectile si
+  le timing est bon.
+- **Trois adversaires au sol.** Le tox, voûté et tremblant, frappe faible mais
+  vient toujours. Le chômeur, jogging à bandes, claquettes-chaussettes et sac
+  de canettes, reste à distance et arrose. La machette, en survêt rouge, est
+  rapide et fait mal.
 - **Pita-mitraillettes sauce andalouse**, coca sans sucre compris : deux par
   zone, posées au sol et rien d'autre — les ennemis n'en lâchent aucune. On les
   ramasse avec Espace pour 30 points de vie. À pleine santé, Espace frappe au

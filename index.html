@@ -453,10 +453,10 @@ const ZONES=[
     len:3000,
     pitas:[1180,2380],
     waves:[
-      {trig:380,  compo:["tox","tox","tox"]},
-      {trig:1050, compo:["tox","tox","tox","tox"]},
-      {trig:1750, compo:["tox","tox","tox","tox","tox"]},
-      {trig:2450, compo:["tox","tox","tox","tox","tox","tox"]},
+      {trig:380,  compo:["tox","tox","chomeur"]},
+      {trig:1050, compo:["tox","chomeur","tox","tox"]},
+      {trig:1750, compo:["tox","tox","chomeur","tox","chomeur"]},
+      {trig:2450, compo:["tox","chomeur","tox","tox","chomeur","tox"]},
     ],
   },
   {
@@ -475,20 +475,23 @@ const ZONES=[
     len:3000,
     pitas:[1300,2500],
     waves:[
-      {trig:380,  compo:["machette","machette","machette"]},
-      {trig:1050, compo:["machette","machette","tox","tox","machette"]},
-      {trig:1750, compo:["machette","machette","machette","machette","tox"]},
-      {trig:2450, compo:["boss","machette","machette","machette"]},
+      {trig:380,  compo:["machette","machette","chomeur"]},
+      {trig:1050, compo:["machette","machette","chomeur","tox","machette"]},
+      {trig:1750, compo:["machette","chomeur","machette","machette","chomeur"]},
+      {trig:2450, compo:["boss","machette","machette","chomeur"]},
     ],
   },
 ];
-/* portee : distance a laquelle l'ennemi prefere lancer plutot qu'avancer */
+/* tir.min/max : distance à laquelle l'ennemi préfère lancer plutôt qu'avancer.
+   armement : durée du coup au corps à corps. viseT : durée avant un jet.      */
 const STATS={
-  tox:     {hp:26, speed:62,  dmg:8,  w:34,
+  tox:     {hp:26, speed:62,  dmg:8,  w:34, armement:0.45, viseT:0.60, roulis:30, mort:"#8fa06a",
             tir:{min:130,max:400,cd:2.4,dmg:7, v:300,type:"seringue"}},
-  machette:{hp:48, speed:112, dmg:14, w:38,
+  chomeur: {hp:40, speed:48,  dmg:9,  w:38, armement:0.52, viseT:0.62, roulis:10, mort:"#c9a852",
+            tir:{min:110,max:540,cd:2.6,dmg:8, v:290,type:"canette"}},
+  machette:{hp:48, speed:112, dmg:14, w:38, armement:0.32, viseT:0.45, roulis:0,  mort:"#e05545",
             tir:{min:170,max:480,cd:2.9,dmg:12,v:380,type:"machette"}},
-  boss:    {hp:340,speed:112, dmg:24, w:56,
+  boss:    {hp:340,speed:112, dmg:24, w:56, armement:0.20, viseT:0.30, roulis:0,  mort:"#c94a8a",
             tir:{min:130,max:620,cd:1.25,dmg:17,v:470,type:"machette"}},
 };
 const CRIS=["HEIN WAÏ !","BIESSE !","ET PAF !","DJU !","ALLEZ !","POUR CHARLEROI !"];
@@ -600,6 +603,7 @@ function lancer(e,s){
       x:e.x+Math.sign(dx||1)*14, y:e.y-34,
       vx:Math.cos(a)*s.tir.v, vy:Math.sin(a)*s.tir.v*0.55,
       dmg:s.tir.dmg, type:s.tir.type, rot:0, age:0,
+      biere:Math.random()<0.5?"86":"carapils",
     });
   }
   sfx.lance();
@@ -618,6 +622,7 @@ function burst(x,y,color,n){
 const NOMS_EPAVE={
   pneu:"un pneu", planche:"une palette", caddie:"un caddie",
   bidon:"un bidon", corps:"…mieux vaut ne pas regarder",
+  croisiere:"un bateau-promenade — et le dîner de deux amoureux",
 };
 function initGondole(){
   epaves=[];
@@ -641,6 +646,13 @@ function initGondole(){
     }
     x+=182+((i*41)%108);i++;
   }
+  /* des bateaux-promenade : larges, lents, et on ne les dégage pas d'un uraken.
+     On fait le vide autour pour que la voie reste franchissable. */
+  [1250,2450,3560].forEach((bx,k)=>{
+    epaves=epaves.filter(o=>Math.abs(o.x-bx)>170);
+    const cy=GY0+[1,3,0][k]*hv+hv/2;
+    epaves.push({x:bx,y:cy,base:cy,t:"croisiere",bob:k*2.1,derive:4,dw:92,dh:34});
+  });
 }
 
 /* ------------------------------------------------------------------ */
@@ -826,11 +838,11 @@ function updateRue(dt,zone){
       e.cd-=dt;
     }else{
       const ex=player.x-e.x, ey=player.y-e.y, d=Math.hypot(ex,ey);
-      if(d<44){e.windup=e.type==="tox"?0.45:(e.type==="boss"?0.20:0.32);}
+      if(d<44){e.windup=s.armement;}
       else if(d>s.tir.min&&d<s.tir.max&&Math.abs(ey)<80&&e.tirCd<=0){
-        e.vise=e.type==="tox"?0.6:(e.type==="boss"?0.30:0.45); // armement, lisible à l'écran
+        e.vise=s.viseT;                        // armement, lisible à l'écran
       }else{
-        const wobble=e.type==="tox"?Math.sin(tGlobal*3+e.wob)*30:0;
+        const wobble=s.roulis?Math.sin(tGlobal*3+e.wob)*s.roulis:0;
         e.x+=ex/d*s.speed*dt;
         e.y+=(ey/d*s.speed*0.7+wobble)*dt;
         e.y=Math.max(YMIN,Math.min(YMAX,e.y));
@@ -839,7 +851,7 @@ function updateRue(dt,zone){
     if(e.hp<=0){
       kills++;
       sfx.kill();
-      burst(e.x,e.y-30,e.type==="tox"?"#8fa06a":"#e05545",12);
+      burst(e.x,e.y-30,s.mort,12);
       addFloat(e.x,e.y-50,CRIS[Math.floor(Math.random()*CRIS.length)],"#ece5d3");
       enemies.splice(i,1);
     }
@@ -886,7 +898,7 @@ function updateGondole(dt,zone){
       player.hitApplied=true;
       for(let i=epaves.length-1;i>=0;i--){
         const o=epaves[i];
-        if(o.t==="corps")continue;
+        if(o.t==="corps"||o.t==="croisiere")continue;
         if(o.x-player.x>-24&&o.x-player.x<112&&Math.abs(o.y-player.y)<46){
           burst(o.x,o.y,"#6a7f86",12);
           addFloat(o.x,o.y-42,"DÉGAGÉ !","#ff9e1b");
@@ -901,8 +913,9 @@ function updateGondole(dt,zone){
   for(const o of epaves){
     o.y=o.base+Math.sin(tGlobal*0.7+o.bob)*o.derive;
     const dx=o.x-player.x, dy=o.y-player.y;
-    if(player.inv<=0&&dx>-46&&dx<54&&Math.abs(dy)<30){
-      const deg=o.t==="corps"?10:15;
+    const lg=o.dw||46, ht=o.dh||30;
+    if(player.inv<=0&&dx>-lg&&dx<lg+8&&Math.abs(dy)<ht){
+      const deg=o.t==="corps"?10:(o.t==="croisiere"?20:15);
       player.hp-=deg;degatsRecus+=deg;player.inv=1.1;shake=9;
       sfx.eau();
       addFloat(player.x,player.y-74,"-"+deg,"#e05545");
@@ -1429,6 +1442,49 @@ function drawTox(e){
   ctx.restore();
   hpBar(x,y-66,e.hp/e.maxHp,26);
 }
+function drawChomeur(e){
+  const x=e.x-camX, y=e.y;
+  shadow(x,y,18);
+  ctx.save();ctx.translate(x,y);
+  if(e.hitFlash>0){ctx.globalAlpha=0.9;ctx.filter="brightness(2.2)";}
+  const f=player.x>=e.x?1:-1;
+  const dandine=Math.sin(tGlobal*3.2+e.wob)*1.6;
+  /* le sac plastique de réserve, posé contre la jambe */
+  ctx.fillStyle="rgba(214,220,226,.35)";
+  ctx.beginPath();ctx.ellipse(f>0?-16:16,-12,8,12,0,0,7);ctx.fill();
+  ctx.strokeStyle="rgba(214,220,226,.45)";ctx.lineWidth=1;
+  ctx.beginPath();ctx.arc(f>0?-16:16,-24,5,Math.PI,0);ctx.stroke();
+  /* jogging à bandes */
+  ctx.fillStyle="#2e3440";
+  ctx.fillRect(-9,-24,8,24);ctx.fillRect(2,-24,8,24);
+  ctx.fillStyle="#98a0ab";
+  ctx.fillRect(-9,-24,2,19);ctx.fillRect(9,-24,2,19);
+  /* claquettes-chaussettes, institution nationale */
+  ctx.fillStyle="#ddd7c8";ctx.fillRect(-10,-6,9,4);ctx.fillRect(1,-6,9,4);
+  ctx.fillStyle="#211d19";ctx.fillRect(-12,-2,12,3);ctx.fillRect(0,-2,12,3);
+  /* le bide, que le t-shirt ne couvre plus */
+  ctx.fillStyle="#c29a72";
+  ctx.beginPath();ctx.ellipse(dandine*0.6,-30,13,9,0,0,7);ctx.fill();
+  ctx.fillStyle="#8f6b48";ctx.fillRect(-3+dandine*0.6,-31,3,3);   // nombril
+  /* t-shirt délavé, trop court */
+  ctx.fillStyle="#586b4e";ctx.fillRect(-13+dandine,-54,26,20);
+  ctx.fillStyle="#47573e";ctx.fillRect(-13+dandine,-54,26,4);
+  ctx.fillStyle="#6b7f5c";ctx.fillRect(-13+dandine,-40,26,2);
+  /* tête, bajoues, casquette */
+  ctx.fillStyle="#c29a72";ctx.fillRect(-8,-72,16,18);
+  ctx.fillStyle="#a37b56";ctx.fillRect(-9,-60,18,4);
+  ctx.fillStyle="#6b3f2a";ctx.fillRect(-10,-75,20,6);
+  ctx.fillRect(f>0?5:-14,-70,9,3);
+  ctx.fillStyle="#20180f";ctx.fillRect(f>0?1:-4,-66,3,3);
+  ctx.fillStyle="#7a5236";ctx.fillRect(f>0?-3:-5,-58,8,2);
+  /* la canette, jamais loin de la main */
+  const leve=e.vise>0?-14:0;
+  ctx.fillStyle="#9aa0a6";ctx.fillRect(f>0?12:-19,-42+leve,7,12);
+  ctx.fillStyle="#cfd4d8";ctx.fillRect(f>0?12:-19,-42+leve,7,2);
+  ctx.fillStyle="#3f7a3a";ctx.fillRect(f>0?12:-19,-38+leve,7,4);
+  ctx.restore();
+  hpBar(x,y-78,e.hp/e.maxHp,28);
+}
 function drawMachette(e,boss){
   const s=boss?1.5:1;
   const x=e.x-camX,y=e.y;
@@ -1508,6 +1564,17 @@ function drawShot(sh){
     ctx.fillStyle="#9ad6b8";ctx.fillRect(-8,-2,10,4);
     ctx.fillStyle="#eef2f3";ctx.fillRect(6,-1,10,2);
     ctx.fillStyle="#8f9298";ctx.fillRect(-12,-5,3,10);
+  }else if(sh.type==="canette"){
+    ctx.rotate(sh.rot);
+    ctx.fillStyle="#9aa0a6";ctx.fillRect(-6,-9,12,18);
+    ctx.fillStyle="#cfd4d8";ctx.fillRect(-6,-9,12,3);ctx.fillRect(-6,6,12,3);
+    /* la 8.6 est bleue, la Carapils verte */
+    ctx.fillStyle=sh.biere==="86"?"#22407e":"#3f7a3a";
+    ctx.fillRect(-6,-4,12,9);
+    ctx.fillStyle="rgba(236,229,211,.7)";ctx.fillRect(-4,-2,3,5);
+    /* la mousse qui gicle en tournant */
+    ctx.fillStyle="rgba(236,229,211,.35)";
+    ctx.fillRect(7,-3,5,2);ctx.fillRect(10,1,4,2);
   }else{
     ctx.rotate(sh.rot);
     ctx.fillStyle="#b9bec4";ctx.fillRect(-16,-3,31,6);
@@ -1531,6 +1598,34 @@ function drawBergeLointaine(){
     ctx.fillStyle="#120e12";ctx.fillRect(bx,238,8,13);          // bittes d'amarrage
     ctx.fillStyle="rgba(90,50,28,.5)";ctx.fillRect(bx+2,257,3,30); // coulures
   }
+}
+/* Sur la berge d'en face, la vie continue : on attend le client sous la lampe.
+   Décor de fond uniquement — rien de tout cela n'est une cible. */
+function drawQuaiFigures(){
+  const off=-camX*0.55;
+  [430,1180,2020,2840,3600,4320].forEach((sx,k)=>{
+    const x=off+sx;
+    if(x<-40||x>W+40)return;
+    /* flaque de lumière au pied du lampadaire */
+    const hg=ctx.createRadialGradient(x,252,4,x,252,58);
+    hg.addColorStop(0,"rgba(255,158,27,.13)");hg.addColorStop(1,"rgba(255,158,27,0)");
+    ctx.fillStyle=hg;ctx.beginPath();ctx.arc(x,252,58,0,7);ctx.fill();
+    const dx=(k%2?1:-1)*6;
+    /* silhouette : manteau court, sac à main, appui sur une jambe */
+    ctx.fillStyle="#241c22";
+    ctx.fillRect(x-3,238,3,13);ctx.fillRect(x+1,238,3,13);        // jambes
+    ctx.fillStyle=["#5e2438","#3a2c4a","#4a2a22"][k%3];
+    ctx.fillRect(x-5,224,10,15);                                   // manteau
+    ctx.fillStyle="#7a5a44";ctx.fillRect(x-4,218,8,7);            // tête
+    ctx.fillStyle=["#2b1d18","#4a3524","#1e1a20"][k%3];
+    ctx.fillRect(x-5,216,10,5);ctx.fillRect(x+dx*0.3,218,3,7);    // cheveux
+    ctx.fillStyle="#241c22";ctx.fillRect(x+4,228,4,5);            // sac à main
+    /* la braise de la cigarette, qui rougeoie par intermittence */
+    if(Math.sin(tGlobal*1.3+k*2)>0.55){
+      ctx.fillStyle="#ff6a3a";ctx.fillRect(x-7,226,2,2);
+      ctx.fillStyle="rgba(255,106,58,.25)";ctx.fillRect(x-8,225,4,4);
+    }
+  });
 }
 function drawPonts(){
   const off=-camX*0.9;
@@ -1580,6 +1675,7 @@ function drawEau(){
   }
 }
 function drawEpave(o){
+  if(o.t==="croisiere")return drawCroisiere(o);
   const x=o.x-camX, y=o.y+Math.sin(tGlobal*1.6+o.bob)*2;
   ctx.save();ctx.translate(x,y);
   ctx.fillStyle="rgba(150,180,190,.08)";
@@ -1609,6 +1705,38 @@ function drawEpave(o){
     ctx.beginPath();ctx.ellipse(-19,-2,7,5,0,0,7);ctx.fill();
     ctx.fillStyle="#232c2b";ctx.fillRect(7,-4,18,4);
   }
+  ctx.restore();
+}
+function drawCroisiere(o){
+  const x=o.x-camX, y=o.y+Math.sin(tGlobal*1.1+o.bob)*1.8;
+  ctx.save();ctx.translate(x,y);
+  ctx.fillStyle="rgba(190,205,210,.07)";
+  ctx.beginPath();ctx.ellipse(-74,12,62,9,0,0,7);ctx.fill();
+  /* coque */
+  ctx.fillStyle="#b8b2a2";
+  ctx.beginPath();
+  ctx.moveTo(-86,-4);ctx.lineTo(76,-4);ctx.lineTo(62,15);ctx.lineTo(-72,15);
+  ctx.closePath();ctx.fill();
+  ctx.fillStyle="#8a3f36";ctx.fillRect(-84,3,158,4);
+  /* cabine vitrée, salle à manger allumée */
+  ctx.fillStyle="#c9c2ae";ctx.fillRect(-52,-27,94,23);
+  ctx.fillStyle="rgba(255,205,120,.5)";
+  for(let k=0;k<6;k++)ctx.fillRect(-46+k*15,-23,10,14);
+  ctx.fillStyle="#9d9686";ctx.fillRect(-56,-31,102,5);
+  /* guirlande de croisière */
+  ctx.strokeStyle="rgba(255,212,120,.45)";ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(-54,-33);ctx.quadraticCurveTo(-4,-44,46,-33);ctx.stroke();
+  ctx.fillStyle="#ffd478";
+  for(let k=1;k<7;k++){const t=k/7;ctx.fillRect(-54+t*100,-33-Math.sin(t*Math.PI)*10,2,2);}
+  /* le couple enlacé à la proue, indifférent à tout */
+  const pen=Math.sin(tGlobal*0.9+o.bob)*0.8;
+  ctx.fillStyle="#2b2b35";ctx.fillRect(48,-25,8,21);          // lui, veste sombre
+  ctx.fillStyle="#c29a72";ctx.fillRect(48,-33,8,9);
+  ctx.fillStyle="#3a2a1c";ctx.fillRect(47,-35,10,4);
+  ctx.fillStyle="#7e2f48";ctx.fillRect(57,-24,8,20);          // elle, robe grenat
+  ctx.fillStyle="#d0a67e";ctx.fillRect(57,-33,8,9);
+  ctx.fillStyle="#5c3a24";ctx.fillRect(56,-36,10,6);
+  ctx.fillStyle="#c29a72";ctx.fillRect(54,-29+pen,5,3);       // têtes qui se touchent
   ctx.restore();
 }
 function drawGondole(p){
@@ -1767,7 +1895,7 @@ function telegraphe(e,x,y){
   if(e.vise>0&&Math.sin(tGlobal*24)>-0.2){
     ctx.fillStyle="#5ad0c0";
     ctx.fillRect(x-15,y-86,30,4);
-    txt(e.type==="tox"?"SERINGUE":"MACHETTE",x,y-92,9,"#5ad0c0","center");
+    txt({tox:"SERINGUE",chomeur:"CANETTE"}[e.type]||"MACHETTE",x,y-92,9,"#5ad0c0","center");
   }
 }
 function render(){
@@ -1782,7 +1910,7 @@ function render(){
   if(shake>0)ctx.translate((Math.random()-0.5)*shake*2,(Math.random()-0.5)*shake*2);
 
   if(zone.kind==="gondole"){
-    drawSky(0);drawTerrils();drawIndustrie();drawBergeLointaine();drawPonts();drawEau();
+    drawSky(0);drawTerrils();drawIndustrie();drawBergeLointaine();drawQuaiFigures();drawPonts();drawEau();
     for(const o of epaves)scene.push({y:o.y,fn:()=>drawEpave(o)});
     for(const b of pitas)scene.push({y:b.y,fn:()=>drawPita(b)});
     scene.push({y:player.y,fn:()=>drawGondole(player)});
@@ -1806,7 +1934,9 @@ function render(){
         ctx.restore();
         e.x=ox;e.y=oy;
       }
-      if(e.type==="tox")drawTox(e);else drawMachette(e,e.type==="boss");
+      if(e.type==="tox")drawTox(e);
+      else if(e.type==="chomeur")drawChomeur(e);
+      else drawMachette(e,e.type==="boss");
       telegraphe(e,e.x-camX,e.y);
     }});
     scene.push({y:player.y,fn:()=>drawJohnny(player)});
