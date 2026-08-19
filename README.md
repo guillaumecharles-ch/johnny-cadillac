@@ -2,9 +2,9 @@
 
 Un beat'em up rétro dans les rues de Charleroi. On incarne Johnny Cadillac,
 sosie de Johnny Hallyday et maître de l'**uraken**, le revers du poing venu du
-karaté. Trois étapes : les tox du quai de la Sambre en ville basse, une
-traversée de la Sambre en gondole, puis les machettes de la place Charles II
-en ville haute.
+karaté. Quatre étapes : sortir de l'aéroport, les tox du quai de la Sambre en
+ville basse, une traversée de la Sambre en gondole, puis les machettes de la
+place Charles II en ville haute.
 
 ## Jouer
 
@@ -24,7 +24,14 @@ bornée en hauteur autant qu'en largeur, pour que tout reste dans le cadre.
 
 ## Ce qu'il y a dedans
 
-- **Trois zones.** Ville basse et ville haute comptent quatre vagues chacune ;
+- **L'aéroport, pour commencer.** Johnny atterrit à Charleroi-Sud et doit
+  rejoindre le centre. Le terminal est sous échafaudages, le trottoir est un
+  chantier — barrières Nadar à contourner, tranchées ouvertes — et les bus
+  filent sans ralentir. Un sur quatre s'arrête, et treize dixièmes de seconde
+  seulement : il faut lire la girouette (`68 CENTRE-VILLE` ou `HORS SERVICE`),
+  se placer devant la porte et appuyer sur Espace. Marcher sur la chaussée se
+  paie cash.
+- **Quatre zones.** Ville basse et ville haute comptent quatre vagues chacune ;
   entre les deux, une descente de la Sambre en gondole où il faut slalomer
   entre pneus, palettes, caddies, bidons et ce qui flotte à côté. Un uraken
   bien placé dégage un débris de la proue — mais pas un bateau-promenade, qui
