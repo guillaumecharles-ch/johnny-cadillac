@@ -53,10 +53,10 @@ bornée en hauteur autant qu'en largeur, pour que tout reste dans le cadre.
 - **Score et classement.** La partie est chronométrée : le score récompense la
   vitesse, les adversaires mis au tapis et les dégâts évités. En fin de partie
   on entre son nom, et le classement du Pays Noir est conservé sur l'appareil.
-- **Un classement commun, sans serveur.** Le jeu lit `scores.json`, servi à
-  côté de lui : tout le monde voit le même tableau. Les scores encore locaux y
-  apparaissent marqués « local » jusqu'à publication. Hors ligne, ou ouvert
-  depuis un fichier, le jeu retombe sans bruit sur les scores de l'appareil.
+- **Un classement commun, sans serveur.** Le jeu lit `scores.json` : d'abord
+  à côté de lui, sinon sur l'adresse publique — la copie hors ligne voit donc
+  le même tableau que le site. Les scores pas encore publiés sont marqués
+  « local ». Sans réseau, le jeu retombe sans bruit sur ceux de l'appareil.
 - **Comparer sans passer par GitHub.** Chaque score produit aussi un code
   `JC1-…`. Collé chez un ami, il entre directement dans son classement.
 - Charleroi sous la drache : terrils, cheminées de la sidérurgie, tour bleue de

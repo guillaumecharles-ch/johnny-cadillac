@@ -654,9 +654,20 @@ const DEPOT="guillaumecharles-ch/johnny-cadillac";
    car un jeton d'écriture dans cette page serait public. */
 let scoresEnLigne=null;      // null tant qu'on n'a rien pu charger
 let dernierIdSurligne=null;
+const SOURCES_SCORES=[
+  "scores.json",                                        // servi à côté du jeu
+  "https://guillaumecharles-ch.github.io/johnny-cadillac/scores.json",
+];                                                      // pour la copie hors ligne
 async function chargerEnLigne(){
+  for(const src of SOURCES_SCORES){
+    const a=await lireSource(src);
+    if(a)return a;
+  }
+  return null;
+}
+async function lireSource(src){
   try{
-    const r=await fetch("scores.json",{cache:"no-store"});
+    const r=await fetch(src,{cache:"no-store"});
     if(!r.ok)return null;
     const d=await r.json();
     const arr=Array.isArray(d)?d:(d&&Array.isArray(d.scores)?d.scores:null);
@@ -672,7 +683,7 @@ async function chargerEnLigne(){
         github:e.github?String(e.github).slice(0,39):null,
         enLigne:true,
       }));
-  }catch(err){return null;}          // fichier:// , hors ligne, CSP : on reste en local
+  }catch(err){return null;}          // hors ligne, ou CSP d'un artefact
 }
 function cleScore(e){return (e.nom||"")+"|"+e.score+"|"+(e.temps||0);}
 function scoresAffichables(){
