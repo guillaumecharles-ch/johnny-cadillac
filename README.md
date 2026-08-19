@@ -30,7 +30,9 @@ bornée en hauteur autant qu'en largeur, pour que tout reste dans le cadre.
   filent sans ralentir. Un sur quatre s'arrête, et treize dixièmes de seconde
   seulement : il faut lire la girouette (`68 CENTRE-VILLE` ou `HORS SERVICE`),
   se placer devant la porte et appuyer sur Espace. Marcher sur la chaussée se
-  paie cash.
+  paie cash. Au-dessus, les low cost enchaînent décollages et approches, train
+  sorti et feux clignotants, sous les couleurs criardes de trois compagnies
+  inventées.
 - **Quatre zones.** Ville basse et ville haute comptent quatre vagues chacune ;
   entre les deux, une descente de la Sambre en gondole où il faut slalomer
   entre pneus, palettes, caddies, bidons et ce qui flotte à côté. Un uraken
