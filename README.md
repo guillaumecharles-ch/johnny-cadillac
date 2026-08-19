@@ -33,13 +33,13 @@ URAKEN.
   zone posées au sol, et un ennemi sur neuf en lâche une. On les ramasse avec
   Espace et elles rendent 30 points de vie. À pleine santé, Espace frappe au
   lieu de ramasser.
-- **Progression RPG** : points de vie, expérience, niveaux, et un uraken qui
-  gagne cinq points de dégâts par niveau.
-- À chaque niveau, un compliment de Madame la Juge ou du Procureur du Roi.
+- **Pas de niveaux, pas d'expérience.** Johnny a 120 points de vie du début à
+  la fin et son uraken frappe toujours à 25. Ce qui progresse, c'est le joueur.
+- Tous les huit adversaires, un compliment de Madame la Juge ou du Procureur
+  du Roi.
 - **Score et classement.** La partie est chronométrée : le score récompense la
-  vitesse, les adversaires mis au tapis, le niveau atteint et les dégâts
-  évités. En fin de partie on entre son nom, et le classement du Pays Noir est
-  conservé sur l'appareil.
+  vitesse, les adversaires mis au tapis et les dégâts évités. En fin de partie
+  on entre son nom, et le classement du Pays Noir est conservé sur l'appareil.
 - Charleroi sous la drache : terrils, cheminées de la sidérurgie, tour bleue de
   la police, beffroi art déco et dôme de la basilique Saint-Christophe.
 
