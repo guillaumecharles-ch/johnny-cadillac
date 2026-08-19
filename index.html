@@ -802,11 +802,10 @@ function burst(x,y,color,n){
 /* ------------------------------------------------------------------ */
 const AY0=344;                            // au-dessus : la chaussée, donc les bus
 const VOIES_TROTTOIR=[394,440,486];
-/* Compagnies inventées, livrées volontairement criardes : le low cost. */
+/* Tout le trafic de Charleroi-Sud, apparemment. Dérive aux trois couleurs
+   du drapeau gabonais : vert, jaune, bleu. */
 const COMPAGNIES=[
-  {nom:"SAMBR'AIR",  vif:"#f2c230", trait:"#1c4fa1", texte:"#1c4fa1"},
-  {nom:"PAYS-NOIR",  vif:"#e8622c", trait:"#241c1a", texte:"#241c1a"},
-  {nom:"CARO-FLY",   vif:"#c94a8a", trait:"#2c7f5a", texte:"#f4eee2"},
+  {nom:"AIR GABON", vif:"#f2c230", trait:"#159a53", texte:"#159a53"},
 ];
 function nouvelAvion(){
   const decolle=Math.random()<0.45;
@@ -1947,11 +1946,14 @@ function drawAvion(a){
   /* aile arrière, en retrait */
   ctx.fillStyle="#7d838c";
   ctx.beginPath();ctx.moveTo(6,2);ctx.lineTo(-34,26);ctx.lineTo(-16,27);ctx.lineTo(14,5);ctx.closePath();ctx.fill();
-  /* dérive aux couleurs de la compagnie */
-  ctx.fillStyle=c.vif;
-  ctx.beginPath();ctx.moveTo(-58,-2);ctx.lineTo(-44,-27);ctx.lineTo(-34,-27);ctx.lineTo(-40,-2);ctx.closePath();ctx.fill();
-  ctx.fillStyle=c.trait;
-  ctx.beginPath();ctx.moveTo(-52,-14);ctx.lineTo(-44,-27);ctx.lineTo(-38,-27);ctx.lineTo(-45,-14);ctx.closePath();ctx.fill();
+  /* dérive peinte aux trois bandes du drapeau */
+  ctx.save();
+  ctx.beginPath();ctx.moveTo(-58,-2);ctx.lineTo(-44,-27);ctx.lineTo(-34,-27);ctx.lineTo(-40,-2);ctx.closePath();
+  ctx.clip();
+  ctx.fillStyle="#159a53";ctx.fillRect(-60,-28,32,9);
+  ctx.fillStyle="#f2c230";ctx.fillRect(-60,-19,32,9);
+  ctx.fillStyle="#2a5fb0";ctx.fillRect(-60,-10,32,11);
+  ctx.restore();
   /* stabilisateur horizontal */
   ctx.fillStyle="#8d949d";
   ctx.beginPath();ctx.moveTo(-56,-1);ctx.lineTo(-76,10);ctx.lineTo(-60,10);ctx.lineTo(-46,2);ctx.closePath();ctx.fill();
