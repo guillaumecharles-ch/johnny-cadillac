@@ -642,6 +642,7 @@ let justice=null; // {t, qui, mot} — l'audience en cours
 
 let state, player, enemies, pitas, shots, epaves, floats, particles;
 let bus, chantier, busT, busN, busRates, avions, avionT;
+let aeroT, aide, busCadence, busPause;
 let zoneI, waveI, gateX, camX, shake, tGlobal=0, splashT, splashVers, introT, kills;
 let runT=0, finOuvert=false, degatsRecus=0, dernierSalut=0;
 
@@ -651,6 +652,7 @@ function reset(){
           atkT:0,cd:0,inv:0,walk:0,atkId:0,hitApplied:false,tangue:0};
   enemies=[];pitas=[];shots=[];epaves=[];floats=[];particles=[];justice=null;
   bus=[];chantier=[];busT=0;busN=0;busRates=0;avions=[];avionT=0;
+  aeroT=0;aide=0;busCadence=4;busPause=1.3;
   zoneI=0;waveI=0;gateX=null;camX=0;shake=0;kills=0;
   runT=0;degatsRecus=0;dernierSalut=0;
   fermerFin();
@@ -824,7 +826,7 @@ function nouvelAvion(){
 }
 function initAeroport(){
   chantier=[];bus=[];busT=2.0;busN=0;
-  avions=[];avionT=0.6;
+  avions=[];avionT=0.6;aeroT=0;aide=0;busCadence=4;busPause=1.3;
   /* un premier avion déjà en vol, pour que le ciel ne soit jamais vide */
   nouvelAvion();
   const len=ZONES[zoneI].len;
@@ -853,7 +855,7 @@ function nouveauBus(){
   busN++;
   bus.push({
     x:depart, v:-430,
-    arret:peutSArreter&&(busN%4===0),
+    arret:peutSArreter&&(busN%busCadence===0),
     phase:"roule", t:0, signale:false,
     ligne:["68","A","P","R"][busN%4],
   });
@@ -1117,8 +1119,27 @@ function updateRue(dt,zone){
   camX=Math.max(0,Math.min(player.x-W/2+80,zone.len-W));
 }
 
+/* Trois paliers d'aide, déclenchés par le temps passé ou les bus ratés.
+   Un joueur qui s'en sort en vingt secondes ne verra jamais rien de tout ça. */
+const AIDES=[
+  {t:42, rates:3, mot:"Lis la girouette : seuls les bus CENTRE-VILLE s'arrêtent."},
+  {t:88, rates:6, mot:"Attends près du panneau, au bord du trottoir. La porte s'ouvre sur la marque au sol."},
+  {t:145,rates:9, mot:"Allez, on t'aide : ils passent plus souvent et restent plus longtemps."},
+];
+function majAide(dt){
+  aeroT+=dt;
+  while(aide<AIDES.length){
+    const a=AIDES[aide];
+    if(aeroT<a.t&&busRates<a.rates)break;
+    aide++;
+    addFloat(player.x,player.y-104,"UN COUP DE MAIN","#5ad0c0");
+    sfx.go();
+    if(aide===3){busCadence=2;busPause=2.3;}   // le dernier palier agit vraiment
+  }
+}
 /* --- L'aéroport : attraper un bus ----------------------------------- */
 function updateAeroport(dt,zone){
+  majAide(dt);
   const sp=210;
   let dx=(keys.right?1:0)-(keys.left?1:0);
   let dy=(keys.down?1:0)-(keys.up?1:0);
@@ -1183,7 +1204,7 @@ function updateAeroport(dt,zone){
       if(b.arret&&b.x-cible<330)b.phase="freine";
     }else if(b.phase==="freine"){
       b.x+=(cible-b.x)*5.5*dt;
-      if(Math.abs(b.x-cible)<3){b.x=cible;b.phase="stop";b.t=1.3;
+      if(Math.abs(b.x-cible)<3){b.x=cible;b.phase="stop";b.t=busPause;
         addFloat(b.x+52,318,"PORTE OUVERTE","#7fc46a");}
     }else if(b.phase==="stop"){
       b.t-=dt;
@@ -2145,6 +2166,17 @@ function drawAbribus(){
   /* marquage au sol de l'arrêt */
   ctx.fillStyle="rgba(201,168,82,.14)";
   ctx.fillRect(x-46,YMIN+2,150,5);
+  /* à partir du deuxième coup de main, on montre où la porte s'ouvre */
+  if(aide>=2){
+    const bat=0.55+Math.abs(Math.sin(tGlobal*2.6))*0.45;
+    ctx.save();ctx.globalAlpha=bat;
+    ctx.strokeStyle="#5ad0c0";ctx.lineWidth=2;
+    ctx.strokeRect(x-26,YMIN+10,52,26);
+    ctx.fillStyle="#5ad0c0";
+    ctx.beginPath();ctx.moveTo(x-7,YMIN-6);ctx.lineTo(x+7,YMIN-6);ctx.lineTo(x,YMIN+6);ctx.closePath();ctx.fill();
+    ctx.restore();
+    txt("PORTE",x,YMIN+52,9,"#5ad0c0","center");
+  }
 }
 function drawBus(b){
   const x=b.x-camX, bas=366;
@@ -2421,6 +2453,15 @@ function drawHUD(){
       else txt("ATTENDS LE BON BUS",W-20,102,11,"#c9a852","right");
     }
     if(busRates>0)txt(busRates+" bus rat"+(busRates>1?"és":"é"),W-20,120,10,"#e05545","right");
+    if(aide>0){
+      const mot=AIDES[aide-1].mot;
+      ctx.fillStyle="rgba(16,12,9,.88)";
+      ctx.fillRect(W/2-330,H-56,660,32);
+      ctx.strokeStyle="#5ad0c0";ctx.lineWidth=1.5;
+      ctx.strokeRect(W/2-330,H-56,660,32);
+      txt("?",W/2-312,H-34,15,"#5ad0c0");
+      txt(mot,W/2-292,H-35,12,"#ece5d3");
+    }
   }else if(zone.kind==="gondole"){
     /* jauge de traversée de la Sambre */
     const pr=Math.max(0,Math.min(1,player.x/(zone.len-60)));
@@ -2434,7 +2475,7 @@ function drawHUD(){
     ctx.fillRect(W/2-330,96,660,40);
     txt(zone.intro,W/2,121,13,"#ece5d3","center");
   }
-  if(zone.kind!=="gondole"&&gateX===null&&enemies.length===0&&Math.sin(tGlobal*6)>0){
+  if(zone.kind==="rue"&&gateX===null&&enemies.length===0&&Math.sin(tGlobal*6)>0){
     txt("AVANCE  ▶",W-40,H-30,20,"#ff9e1b","right","#ff9e1b");
   }
   /* l'audience : compliment du tribunal de Charleroi */

@@ -33,6 +33,11 @@ bornée en hauteur autant qu'en largeur, pour que tout reste dans le cadre.
   paie cash. Au-dessus, les avions Air Gabon enchaînent décollages et
   approches, train sorti, feux clignotants et dérive aux trois bandes vert,
   jaune, bleu — apparemment la seule compagnie à desservir Charleroi.
+- **Un coup de main si ça coince.** Trois paliers d'aide, déclenchés par le
+  temps passé à l'aéroport ou par le nombre de bus ratés : d'abord le conseil
+  de lire la girouette, puis une marque au sol qui montre où la porte s'ouvre,
+  et enfin des bus qui passent deux fois plus souvent et restent presque deux
+  fois plus longtemps. Qui s'en sort vite ne voit jamais rien de tout ça.
 - **Quatre zones.** Ville basse et ville haute comptent quatre vagues chacune ;
   entre les deux, une descente de la Sambre en gondole où il faut slalomer
   entre pneus, palettes, caddies, bidons et ce qui flotte à côté. Un uraken
